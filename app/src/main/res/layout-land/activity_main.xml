@@ -10,31 +10,8 @@
     <fragment
         android:layout_weight="2"
         android:id="@+id/fragmentScreenLand"
-        android:name="com.example.calculator.FragmentScreen"
+        android:name="com.example.calculator.FragmentLandLeft"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
     </fragment>
-
-    <LinearLayout
-        android:layout_weight="8"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-        <fragment
-            android:layout_weight="6"
-            android:id="@+id/fragmentRight"
-            android:name="com.example.calculator.FragmentLandLeft"
-            android:layout_width="0dp"
-            android:layout_height="match_parent">
-        </fragment>
-
-        <fragment
-            android:layout_weight="4"
-            android:id="@+id/fragmentLeft"
-            android:layout_width="0dp"
-            android:name="com.example.calculator.FragmentScreen"
-            android:layout_height="match_parent">
-        </fragment>
-    </LinearLayout>
-
 </LinearLayout>
