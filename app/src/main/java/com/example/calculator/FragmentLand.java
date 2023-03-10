@@ -15,7 +15,7 @@ public class FragmentLand extends Fragment {
             txtTam, txtChin, txtKhong, txtBang, txtNhan, txtChia, txtCong,
             txtTru, txtAc, txtCongTru, txtPhantram, txtCham, txtManHinh;
     int chieuDaiChu = 6;
-    String sizeChuLon = "90", sizeChuNho = "62", sizeChuLucTinh = "45";
+    String sizeChuLon = "22", sizeChuNho = "22", sizeChuLucTinh = "22";
     String  chuoi, cong, tru, nhan, chia;
     Boolean dauCong = false, dauTru = false, dauChia = false, dauNhan = false,dauBang = false, phanTram = false;
     Float bienGiu, bienTam;
@@ -23,8 +23,6 @@ public class FragmentLand extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_layout, container, false);
-        anhXa(view);
-        ChucNang();
         return view;
     }
 

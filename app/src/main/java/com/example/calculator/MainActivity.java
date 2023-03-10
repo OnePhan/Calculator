@@ -2,6 +2,8 @@ package com.example.calculator;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.SharedPreferences;
+import android.content.res.Configuration;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
@@ -14,16 +16,40 @@ public class MainActivity extends AppCompatActivity {
     txtNam, txtSau, txtBay, txtTam, txtChin, txtKhong, txtBang, txtNhan, txtChia,
     txtCong, txtTru, txtAc, txtCongTru, txtPhantram, txtCham, txtManHinh;
     int chieuDaiChu = 6;
-    String sizeChuLon = "90", sizeChuNho = "62", sizeChuLucTinh = "45";
+    String sizeChuLon = "90", sizeChuNho = "66", sizeChuLucTinh = "50", sizeChuLandScape = "40";
     String  chuoi, cong, tru, nhan, chia;
     Boolean dauCong = false, dauTru = false, dauChia = false, dauNhan = false,dauBang = false, phanTram = false;
     Float bienGiu, bienTam;
+    SharedPreferences sharedPreferences;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        anhXa();
+        sharedPreferences = getSharedPreferences("data", MODE_PRIVATE);
+        txtManHinh.setText(sharedPreferences.getString("so",""));
+        bienGiu = sharedPreferences.getFloat("bienGiu", 0);
+        bienTam = sharedPreferences.getFloat("bienTam", 0);
+        String dau = sharedPreferences.getString("dau", null);
+
+        if (dau == "+"){
+            cong = "+";
+        }
+        if (dau == "-"){
+            tru = "-";
+        }
+        if (dau == "*"){
+            nhan = "*";
+        }
+        if (dau == "/"){
+            chia = "/";
+        }
+        xuLyPhim_AC();
+        xuLyCoChu();
+        ChucNang();
     }
+
     public void ChucNang(){
         txtAc.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -41,6 +67,7 @@ public class MainActivity extends AppCompatActivity {
                     lenMau();
                 }
                 xuLyPhim_AC();
+                Luudiem();
             }
         });
         txtMot.setOnClickListener(new View.OnClickListener() {
@@ -52,6 +79,7 @@ public class MainActivity extends AppCompatActivity {
                 xuLySo(so);
                 xuLyPhim_AC();
                 bienGiu = Float.parseFloat(txtManHinh.getText().toString().trim() +"");
+                Luudiem();
             }
         });
         txtHai.setOnClickListener(new View.OnClickListener() {
@@ -63,6 +91,7 @@ public class MainActivity extends AppCompatActivity {
                 xuLySo(so);
                 xuLyPhim_AC();
                 bienGiu = Float.parseFloat(txtManHinh.getText().toString().trim());
+                Luudiem();
             }
         });
         txtBa.setOnClickListener(new View.OnClickListener() {
@@ -74,6 +103,7 @@ public class MainActivity extends AppCompatActivity {
                 xuLySo(so);
                 xuLyPhim_AC();
                 bienGiu = Float.parseFloat(txtManHinh.getText().toString().trim());
+                Luudiem();
             }
         });
         txtBon.setOnClickListener(new View.OnClickListener() {
@@ -85,6 +115,7 @@ public class MainActivity extends AppCompatActivity {
                 xuLySo(so);
                 xuLyPhim_AC();
                 bienGiu = Float.parseFloat(txtManHinh.getText().toString().trim());
+                Luudiem();
             }
         });
         txtNam.setOnClickListener(new View.OnClickListener() {
@@ -96,6 +127,7 @@ public class MainActivity extends AppCompatActivity {
                 xuLySo(so);
                 xuLyPhim_AC();
                 bienGiu = Float.parseFloat(txtManHinh.getText().toString().trim());
+                Luudiem();
             }
         });
         txtSau.setOnClickListener(new View.OnClickListener() {
@@ -107,6 +139,7 @@ public class MainActivity extends AppCompatActivity {
                 xuLySo(so);
                 xuLyPhim_AC();
                 bienGiu = Float.parseFloat(txtManHinh.getText().toString().trim());
+                Luudiem();
             }
         });
         txtBay.setOnClickListener(new View.OnClickListener() {
@@ -118,6 +151,7 @@ public class MainActivity extends AppCompatActivity {
                 xuLySo(so);
                 xuLyPhim_AC();
                 bienGiu = Float.parseFloat(txtManHinh.getText().toString().trim());
+                Luudiem();
             }
         });
         txtTam.setOnClickListener(new View.OnClickListener() {
@@ -129,6 +163,7 @@ public class MainActivity extends AppCompatActivity {
                 xuLySo(so);
                 xuLyPhim_AC();
                 bienGiu = Float.parseFloat(txtManHinh.getText().toString().trim());
+                Luudiem();
             }
         });
         txtChin.setOnClickListener(new View.OnClickListener() {
@@ -140,6 +175,7 @@ public class MainActivity extends AppCompatActivity {
                 xuLySo(so);
                 xuLyPhim_AC();
                 bienGiu = Float.parseFloat(txtManHinh.getText().toString().trim());
+                Luudiem();
             }
 
         });
@@ -159,6 +195,7 @@ public class MainActivity extends AppCompatActivity {
                 }
                 xuLyPhim_AC();
                 bienGiu = Float.parseFloat(txtManHinh.getText().toString().trim());
+                Luudiem();
             }
         });
         txtPhantram.setOnClickListener(new View.OnClickListener() {
@@ -169,15 +206,24 @@ public class MainActivity extends AppCompatActivity {
                     Float number = Float.parseFloat(txtManHinh.getText().toString().trim());
                     Float so = number/100;
                     phanTram = true;
-
                     chuoi = so+"";
                     if (chuoi.length() >= chieuDaiChu){
-                        txtManHinh.setTextSize(Float.valueOf(sizeChuLucTinh));
+                        Configuration configuration = getResources().getConfiguration();
+                        if (configuration.orientation == Configuration.ORIENTATION_LANDSCAPE){
+                            txtManHinh.setTextSize(Float.valueOf(sizeChuLandScape));
+                        }else {
+                            txtManHinh.setTextSize(Float.valueOf(sizeChuLucTinh));
+                        }
                     }else{
-                        txtManHinh.setTextSize(Float.valueOf(sizeChuLon));
+                        Configuration configuration = getResources().getConfiguration();
+                        if (configuration.orientation == Configuration.ORIENTATION_LANDSCAPE){
+                            txtManHinh.setTextSize(Float.valueOf(sizeChuLandScape));
+                        }else {
+                            txtManHinh.setTextSize(Float.valueOf(sizeChuLon));
+                        }
                     }
-
                     txtManHinh.setText(so+"");
+                    Luudiem();
                 }
             }
         });
@@ -188,6 +234,7 @@ public class MainActivity extends AppCompatActivity {
                 if (chuoi.length() !=0){
                     xuLyAbs();
                 }
+                Luudiem();
             }
         });
         txtCham.setOnClickListener(new View.OnClickListener() {
@@ -198,6 +245,7 @@ public class MainActivity extends AppCompatActivity {
                 if ( index < 0){
                     txtManHinh.append(".");
                 }
+                Luudiem();
             }
         });
         txtCong.setOnClickListener(new View.OnClickListener() {
@@ -210,6 +258,7 @@ public class MainActivity extends AppCompatActivity {
                 cong = "+"; tru = null; nhan = null; chia = null;
                 dauCong = true; dauChia = false; dauNhan = false; dauTru = false;
                 lenMau();
+                Luudiem();
             }
         });
         txtTru.setOnClickListener(new View.OnClickListener() {
@@ -222,6 +271,7 @@ public class MainActivity extends AppCompatActivity {
                 tru = "-"; cong = null; nhan = null; chia = null;
                 dauCong = false; dauChia = false; dauNhan = false; dauTru = true;
                 lenMau();
+                Luudiem();
             }
         });
         txtNhan.setOnClickListener(new View.OnClickListener() {
@@ -234,6 +284,7 @@ public class MainActivity extends AppCompatActivity {
                 cong = null; tru = null; nhan = "*"; chia = null;
                 dauCong = false; dauChia = false; dauNhan = true; dauTru = false;
                 lenMau();
+                Luudiem();
             }
         });
         txtChia.setOnClickListener(new View.OnClickListener() {
@@ -246,6 +297,7 @@ public class MainActivity extends AppCompatActivity {
                 cong = null; tru = null; nhan = null; chia = "/";
                 dauCong = false; dauChia = true; dauNhan = false; dauTru = false;
                 lenMau();
+                Luudiem();
             }
         });
         txtBang.setOnClickListener(new View.OnClickListener() {
@@ -253,13 +305,23 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 dieuKienTinh();
                 chuoi = txtManHinh.getText().toString().trim();
+                Configuration configuration = getResources().getConfiguration();
                 if (chuoi.length() >= chieuDaiChu){
-                    txtManHinh.setTextSize(Float.valueOf(sizeChuLucTinh));
+                    if (configuration.orientation == Configuration.ORIENTATION_LANDSCAPE){
+                        txtManHinh.setTextSize(Float.valueOf(sizeChuLandScape));
+                    }else {
+                        txtManHinh.setTextSize(Float.valueOf(sizeChuLucTinh));
+                    }
                 }else{
-                    txtManHinh.setTextSize(Float.valueOf(sizeChuLon));
+                    if (configuration.orientation == Configuration.ORIENTATION_LANDSCAPE){
+                        txtManHinh.setTextSize(Float.valueOf(sizeChuLandScape));
+                    }else {
+                        txtManHinh.setTextSize(Float.valueOf(sizeChuLon));
+                    }
                 }
                 xoaMau();
                 dauBang = true;
+                Luudiem();
             }
         });
     }
@@ -377,18 +439,24 @@ public class MainActivity extends AppCompatActivity {
         }
     }
     public void xuLySo(String so){
-        if (chuoi.length() != 0){
-            if (chuoi.length() < 9){
-                if (chuoi.length() == 1 && chuoi.indexOf("0") == 0) {
-                    txtManHinh.setText("");
-                    txtManHinh.append(so);
-                }else {
-                    txtManHinh.append(so);
-                }
-            }
-        }else {
+        Configuration configuration = getResources().getConfiguration();
+        if (configuration.orientation == Configuration.ORIENTATION_LANDSCAPE){
             txtManHinh.append(so);
+        }else{
+            if (chuoi.length() != 0){
+                if (chuoi.length() < 9){
+                    if (chuoi.length() == 1 && chuoi.indexOf("0") == 0) {
+                        txtManHinh.setText("");
+                        txtManHinh.append(so);
+                    }else {
+                        txtManHinh.append(so);
+                    }
+                }
+            }else {
+                txtManHinh.append(so);
+            }
         }
+
     }
     public void xuLyPhim_AC(){
         chuoi = txtManHinh.getText().toString().trim();
@@ -399,36 +467,30 @@ public class MainActivity extends AppCompatActivity {
         }
     }
     public void xuLyCoChu(){
-        chuoi = txtManHinh.getText().toString().trim();
-        if (chuoi.length() >= chieuDaiChu){
-            txtManHinh.setTextSize(Float.valueOf(sizeChuNho));
-        }else{
-            txtManHinh.setTextSize(Float.parseFloat(sizeChuLon));
+        Configuration configuration = getResources().getConfiguration();
+        if (configuration.orientation == Configuration.ORIENTATION_LANDSCAPE){
+            txtManHinh.setTextSize(Float.valueOf(sizeChuLandScape));
+        }else {
+            chuoi = txtManHinh.getText().toString().trim();
+            if (chuoi.length() >= chieuDaiChu){
+                txtManHinh.setTextSize(Float.valueOf(sizeChuNho));
+            }else{
+                txtManHinh.setTextSize(Float.parseFloat(sizeChuLon));
+            }
         }
+
+
     }
     public void resultType(String dau, Float a){
         if (bienTam == bienTam.intValue()){
-
             txtManHinh.setText(bienTam.intValue() +"");
-
-//            Kết quả tính lần trước.
-
-//            if (bienGiu.intValue() == bienGiu){
-//                txtResult.setText(a.intValue() + dau + bienGiu.intValue() +" = " + bienTam.intValue());
-//            }else {
-//                txtResult.setText(a +dau+ bienGiu +" = " + bienTam.intValue());
-//            }
-
         }else {
             txtManHinh.setText(bienTam +"");
-
-//            Trả kết quả tính lần trước ra màn hình.
-//            txtResult.setText(a +dau+ bienGiu +" = " + bienTam);
         }
     }
+//   Tinh Toan Phep tinh ( + - * / )
     public void tinhToan(String thucThi) {
-        switch (thucThi)
-        {
+        switch (thucThi) {
             case "+":
                 if (bienTam == null){
                     bienTam = Float.valueOf(0);
@@ -463,6 +525,7 @@ public class MainActivity extends AppCompatActivity {
                 break;
         }
     }
+//   Kiem tra phep tinh do la phep ( +,  -,  *  hay  /  )
     public void dieuKienTinh(){
         if (cong != null){
             tinhToan(cong);
@@ -499,4 +562,25 @@ public class MainActivity extends AppCompatActivity {
         txtKhong  = (TextView) findViewById(R.id.textViewZero);
         txtManHinh = (TextView) findViewById(R.id.textViewManHinh);
     }
+     public void Luudiem(){
+         SharedPreferences.Editor editor = sharedPreferences.edit();
+         editor.putString("so", txtManHinh.getText().toString());
+         editor.putFloat("bienGiu", bienGiu);
+         editor.putFloat("bienTam", bienTam);
+         String dau = null;
+         if (cong != null){
+             dau = cong;
+         }
+         if (tru != null) {
+             dau = tru;
+         }
+         if(nhan != null){
+             dau = nhan;
+         }
+         if(chia != null){
+             dau = chia;
+         }
+         editor.putString("dau", dau);
+         editor.commit();
+     }
 }
