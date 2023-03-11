@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.text.BoringLayout;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -18,9 +19,10 @@ public class MainActivity extends AppCompatActivity {
     txtCong, txtTru, txtAc, txtCongTru, txtPhantram, txtCham, txtManHinh;
     int chieuDaiChu = 6;
     String sizeChuLon = "90", sizeChuNho = "66", sizeChuLucTinh = "50", sizeChuLandScape = "40";
-    String  chuoi, cong, tru, nhan, chia;
-    Boolean dauCong = false, dauTru = false, dauChia = false, dauNhan = false,dauBang = false, phanTram = false;
-    Float bienGiu, bienTam;
+    String  chuoi, cong, tru, nhan, chia, XcanY, XmuY;
+    Boolean dauCong = false, dauTru = false, dauChia = false, dauNhan = false,dauBang = false, phanTram = false, xCany = false, xMuy = false;
+    Float bienGiu;
+    Float bienTam;
     SharedPreferences sharedPreferences;
 
 //    Landscape ---------------------------------------------------------------------------
@@ -86,10 +88,10 @@ public class MainActivity extends AppCompatActivity {
                     dauCong = false; dauTru = false; dauChia = false; dauNhan = false;
                     bienTam = Float.valueOf(0); bienGiu = Float.valueOf(0);
                     phanTram = false;
-                    txtManHinh.setText(null);
+                    txtManHinh.setText("0");
                     xoaMau();
                 } else if (txtAc.getText().toString() == "C") {
-                    txtManHinh.setText(null);
+                    txtManHinh.setText("0");
                     lenMau();
                 }
                 xuLyPhim_AC();
@@ -249,6 +251,7 @@ public class MainActivity extends AppCompatActivity {
                         }
                     }
                     resultType(so);
+                    bienGiu = Float.parseFloat(txtManHinh.getText().toString().trim());
                     Luudiem();
                 }
             }
@@ -260,6 +263,7 @@ public class MainActivity extends AppCompatActivity {
                 if (chuoi.length() !=0){
                     xuLyAbs();
                 }
+                bienGiu = Float.parseFloat(txtManHinh.getText().toString().trim());
                 Luudiem();
             }
         });
@@ -362,6 +366,7 @@ public class MainActivity extends AppCompatActivity {
         txtTru.setTextColor(Color.WHITE);
     }
     public void xuLy_Input() {
+
         if (phanTram == true) {
             txtManHinh.setText(null);
             phanTram = false;
@@ -464,28 +469,22 @@ public class MainActivity extends AppCompatActivity {
         }
     }
     public void xuLySo(String so){
-        Configuration configuration = getResources().getConfiguration();
-        if (configuration.orientation == Configuration.ORIENTATION_LANDSCAPE){
-            txtManHinh.append(so);
-        }else{
-            if (chuoi.length() != 0){
-                if (chuoi.length() < 9){
-                    if (chuoi.length() == 1 && chuoi.indexOf("0") == 0) {
-                        txtManHinh.setText("");
+        if (chuoi.length() != 0){
+            if (chuoi.length() < 9){
+                if (chuoi.length() == 1 && chuoi.indexOf("0") == 0) {
+                    txtManHinh.setText("");
+                    txtManHinh.append(so);
+                }else {
                         txtManHinh.append(so);
-                    }else {
-                        txtManHinh.append(so);
-                    }
                 }
-            }else {
-                txtManHinh.append(so);
             }
+        }else {
+            txtManHinh.append(so);
         }
-
     }
     public void xuLyPhim_AC(){
         chuoi = txtManHinh.getText().toString().trim();
-        if (chuoi.length() == 0) {
+        if (chuoi.length() == 1 && chuoi.equals("0")) {
             txtAc.setText("AC");
         }else {
             txtAc.setText("C");
@@ -521,24 +520,21 @@ public class MainActivity extends AppCompatActivity {
                     bienTam = Float.valueOf(0);
                 }
                 bienTam = bienTam + bienGiu;
-                Float a = bienTam - bienGiu;
-                resultType(" + ", a);
+                resultType(" + ", bienTam);
                 break;
             case "-":
                 if (bienTam == null){
                     bienTam = Float.valueOf(0);
                 }
                 bienTam = bienTam - bienGiu;
-                Float b = bienTam + bienGiu;
-                resultType(" - ", b);
+                resultType(" - ", bienTam);
                 break;
             case "*":
                 if (bienTam == null){
                     bienTam = Float.valueOf(0);
                 }
                 bienTam = bienTam * bienGiu;
-                Float c = bienTam / bienGiu;
-                resultType(" * ", c);
+                resultType(" * ", bienTam);
                 break;
             case "/":
                 if (bienTam == null){
@@ -547,6 +543,23 @@ public class MainActivity extends AppCompatActivity {
                 bienTam = bienTam / bienGiu;
                 Float d = bienTam * bienGiu;
                 resultType(" / ", d);
+                break;
+
+            case "^":
+                if (bienTam == null){
+                    bienTam = Float.valueOf(0);
+                }
+                double avc = Math.pow(bienTam, bienGiu);
+                bienTam = Float.parseFloat(String.valueOf(avc));
+                resultType((float) bienTam);
+                break;
+            case "can":
+                if (bienTam == null){
+                    bienTam = Float.valueOf(0);
+                }
+                double can = Math.exp(Math.log(bienTam) * 1/bienGiu);
+                bienTam = Float.parseFloat(String.valueOf(can));
+                resultType((float) bienTam);
                 break;
         }
     }
@@ -563,6 +576,12 @@ public class MainActivity extends AppCompatActivity {
         }
         if (chia != null){
             tinhToan(chia);
+        }
+        if (XmuY != null){
+            tinhToan(XmuY);
+        }
+        if (XcanY != null){
+            tinhToan(XcanY);
         }
     }
     public void anhXa(){
@@ -644,7 +663,6 @@ public class MainActivity extends AppCompatActivity {
          editor.commit();
      }
 
-
 //     ------------------ CODE Fragment LANDSCAPE------------------------------
      public void LandScape_Left(){
 //      ------------------------------ Dong 1------------------------------
@@ -692,7 +710,6 @@ public class MainActivity extends AppCompatActivity {
                   database.QueryData("INSERT INTO mc VALUES(null,'"+ s +"')");
               }
           });
-
           txtMr.setOnClickListener(new View.OnClickListener() {
               @Override
               public void onClick(View v) {
@@ -702,7 +719,6 @@ public class MainActivity extends AppCompatActivity {
                   }
               }
           });
-
 //      ------------------------------ Dong 2------------------------------
           txtTwoNd.setOnClickListener(new View.OnClickListener() {
               @Override
@@ -760,7 +776,14 @@ public class MainActivity extends AppCompatActivity {
           txtXmuY.setOnClickListener(new View.OnClickListener() {
               @Override
               public void onClick(View v) {
-
+                  chuoi = txtManHinh.getText().toString().trim();
+                  if (chuoi.length() != 0){
+                      bienTam = Float.parseFloat(txtManHinh.getText().toString().trim());
+                  }
+                  cong = null; tru = null; nhan = null; chia = null; XmuY = "^"; XcanY = null;
+                  dauCong = false; dauChia = false; dauNhan = true; dauTru = false; xMuy = true; xCany = false;
+                  lenMau();
+                  Luudiem();
               }
           });
           txtEmuX.setOnClickListener(new View.OnClickListener() {
@@ -836,7 +859,14 @@ public class MainActivity extends AppCompatActivity {
          txtCanYX.setOnClickListener(new View.OnClickListener() {
              @Override
              public void onClick(View v) {
-
+                 chuoi = txtManHinh.getText().toString().trim();
+                 if (chuoi.length() != 0){
+                     bienTam = Float.parseFloat(txtManHinh.getText().toString().trim());
+                 }
+                 cong = null; tru = null; nhan = null; chia = null; XmuY = null; XcanY = "can";
+                 dauCong = false; dauChia = false; dauNhan = true; dauTru = false; xMuy = false; xCany = true;
+                 lenMau();
+                 Luudiem();
              }
          });
          txtLn.setOnClickListener(new View.OnClickListener() {
@@ -886,7 +916,6 @@ public class MainActivity extends AppCompatActivity {
                  }
              }
          });
-
          txtSin.setOnClickListener(new View.OnClickListener() {
              @Override
              public void onClick(View v) {
@@ -986,7 +1015,6 @@ public class MainActivity extends AppCompatActivity {
                  Luudiem();
              }
          });
-
          txtTanh.setOnClickListener(new View.OnClickListener() {
              @Override
              public void onClick(View v) {

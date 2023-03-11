@@ -17,7 +17,7 @@ public class Database extends SQLiteOpenHelper {
 //  Query
     public void QueryData(String url){
         SQLiteDatabase database = getWritableDatabase();
-        database.execSQL(url);
+        database. execSQL(url);
     }
 //  Getdata
     public Cursor getData(String url){
