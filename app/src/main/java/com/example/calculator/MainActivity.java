@@ -13,25 +13,24 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
-
     TextView txtMot, txtHai, txtBa, txtBon,
     txtNam, txtSau, txtBay, txtTam, txtChin, txtKhong, txtBang, txtNhan, txtChia,
     txtCong, txtTru, txtAc, txtCongTru, txtPhantram, txtCham, txtManHinh;
     int chieuDaiChu = 6;
     String sizeChuLon = "90", sizeChuNho = "66", sizeChuLucTinh = "50", sizeChuLandScape = "40";
-    String  chuoi, cong, tru, nhan, chia, XcanY, XmuY;
-    Boolean dauCong = false, dauTru = false, dauChia = false, dauNhan = false,dauBang = false, phanTram = false, xCany = false, xMuy = false;
-    Float bienGiu;
+    String  chuoi, cong, tru, nhan, chia;
+    Boolean dauCong = false, dauTru = false, dauChia = false, dauNhan = false,dauBang = false, phanTram = false;
+    String bienGiu;
     Float bienTam;
     SharedPreferences sharedPreferences;
-
+    int khoichay = 0;
 //    Landscape ---------------------------------------------------------------------------
     TextView txtNgoacP, txtNgoacT, txtMc, txtMplus, txtMtru,
         txtMr, txtTwoNd, txtXmuTwo, txtXmuThree, txtXmuY, txtEmuX, txtTenmuX,
         txtMotChiaX, txtCan2x, txtCan3x, txtCanYX, txtLn, txtLog10, txtXgiaiThua,
         txtSin, txtCos, txtTan, txtE, txtEE, txtDeg, txtSinh, txtCosh, txtTanh, txtPi, txtRand;
-        Boolean check = true;
-
+        Boolean check = true, xCany = false, xMuy = false, xCan2 = false, xCan3 = false, xMu2 = false, xMu3 = false;
+        String  XcanY, XmuY, Xcan2, Xcan3, Xmu2, Xmu3;
         Database database;
 
     @Override
@@ -49,15 +48,24 @@ public class MainActivity extends AppCompatActivity {
         }else {
             ChucNang();
         }
-
     }
-
+    public void checkKhoiChay(int k){
+        if(khoichay == 0){
+            txtManHinh.setText(null);
+            khoichay++;
+        }
+    }
+    public void Luudiem(){
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString("so", txtManHinh.getText().toString());
+        editor.putString("bGiu", bienGiu);
+        editor.commit();
+    }
     public void getDataShare(){
         sharedPreferences = getSharedPreferences("data", MODE_PRIVATE);
         txtManHinh.setText(sharedPreferences.getString("so","0"));
-        bienGiu = sharedPreferences.getFloat("bienGiu", 0);
-        bienTam = sharedPreferences.getFloat("bienTam", 0);
-        String dau = sharedPreferences.getString("dau", null);
+        bienGiu = sharedPreferences.getString("bGiu", "0");
+        String dau = sharedPreferences.getString("dauPhepTinh", null);
         if (dau == "+"){
             cong = "+";
             dauCong = true;
@@ -74,6 +82,14 @@ public class MainActivity extends AppCompatActivity {
             chia = "/";
             dauChia = true;
         }
+        if (dau == "powy"){
+            XmuY = "powy";
+            xMuy = true;
+        }
+        if (dau == "pow2"){
+            Xmu2 = "pow2";
+            xMu2 = true;
+        }
         lenMau();
         xuLyPhim_AC();
         xuLyCoChu();
@@ -84,9 +100,9 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 xuLyPhim_AC();
                 if (txtAc.getText().toString() == "AC"){
-                    cong = null; tru = null; nhan = null; chia = null;
-                    dauCong = false; dauTru = false; dauChia = false; dauNhan = false;
-                    bienTam = Float.valueOf(0); bienGiu = Float.valueOf(0);
+                    cong = null; tru = null; nhan = null; chia = null; XmuY = null; Xmu2 = null; Xmu3 = null; Xcan2 = null; Xcan3 = null; XcanY = null;
+                    dauCong = false; dauTru = false; dauChia = false; dauNhan = false; xMuy = false; xMu2 = false; xMu3 = false; xCany = false; xCan2 = false; xCan3= false;
+                    bienTam = Float.valueOf(0); bienGiu = null;
                     phanTram = false;
                     txtManHinh.setText("0");
                     xoaMau();
@@ -101,109 +117,64 @@ public class MainActivity extends AppCompatActivity {
         txtMot.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                xuLy_Input();
                 String so = "1";
-                xuLyCoChu();
-                xuLySo(so);
-                xuLyPhim_AC();
-                bienGiu = Float.parseFloat(txtManHinh.getText().toString().trim() +"");
-                Luudiem();
+                phimSo(so);
             }
         });
         txtHai.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                xuLy_Input();
                 String so = "2";
-                xuLyCoChu();
-                xuLySo(so);
-                xuLyPhim_AC();
-                bienGiu = Float.parseFloat(txtManHinh.getText().toString().trim());
-                Luudiem();
+                phimSo(so);
             }
         });
         txtBa.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                xuLy_Input();
                 String so = "3";
-                xuLyCoChu();
-                xuLySo(so);
-                xuLyPhim_AC();
-                bienGiu = Float.parseFloat(txtManHinh.getText().toString().trim());
-                Luudiem();
+                phimSo(so);
             }
         });
         txtBon.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                xuLy_Input();
                 String so = "4";
-                xuLyCoChu();
-                xuLySo(so);
-                xuLyPhim_AC();
-                bienGiu = Float.parseFloat(txtManHinh.getText().toString().trim());
-                Luudiem();
+                phimSo(so);
             }
         });
         txtNam.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                xuLy_Input();
                 String so = "5";
-                xuLyCoChu();
-                xuLySo(so);
-                xuLyPhim_AC();
-                bienGiu = Float.parseFloat(txtManHinh.getText().toString().trim());
-                Luudiem();
+                phimSo(so);
             }
         });
         txtSau.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                xuLy_Input();
                 String so = "6";
-                xuLyCoChu();
-                xuLySo(so);
-                xuLyPhim_AC();
-                bienGiu = Float.parseFloat(txtManHinh.getText().toString().trim());
-                Luudiem();
+                phimSo(so);
             }
         });
         txtBay.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                xuLy_Input();
                 String so = "7";
-                xuLyCoChu();
-                xuLySo(so);
-                xuLyPhim_AC();
-                bienGiu = Float.parseFloat(txtManHinh.getText().toString().trim());
-                Luudiem();
+                phimSo(so);
             }
         });
         txtTam.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                xuLy_Input();
                 String so = "8";
-                xuLyCoChu();
-                xuLySo(so);
-                xuLyPhim_AC();
-                bienGiu = Float.parseFloat(txtManHinh.getText().toString().trim());
-                Luudiem();
+                phimSo(so);
             }
         });
         txtChin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                xuLy_Input();
                 String so = "9";
-                xuLyCoChu();
-                xuLySo(so);
-                xuLyPhim_AC();
-                bienGiu = Float.parseFloat(txtManHinh.getText().toString().trim());
-                Luudiem();
+                phimSo(so);
             }
 
         });
@@ -222,7 +193,7 @@ public class MainActivity extends AppCompatActivity {
                     txtManHinh.append("0");
                 }
                 xuLyPhim_AC();
-                bienGiu = Float.parseFloat(txtManHinh.getText().toString().trim());
+                bienGiu = txtManHinh.getText().toString().trim();
                 Luudiem();
             }
         });
@@ -251,7 +222,7 @@ public class MainActivity extends AppCompatActivity {
                         }
                     }
                     resultType(so);
-                    bienGiu = Float.parseFloat(txtManHinh.getText().toString().trim());
+                    bienGiu = txtManHinh.getText().toString().trim();
                     Luudiem();
                 }
             }
@@ -263,7 +234,7 @@ public class MainActivity extends AppCompatActivity {
                 if (chuoi.length() !=0){
                     xuLyAbs();
                 }
-                bienGiu = Float.parseFloat(txtManHinh.getText().toString().trim());
+                bienGiu = txtManHinh.getText().toString().trim();
                 Luudiem();
             }
         });
@@ -285,8 +256,9 @@ public class MainActivity extends AppCompatActivity {
                 if (chuoi.length() != 0){
                     bienTam = Float.parseFloat(txtManHinh.getText().toString().trim());
                 }
-                cong = "+"; tru = null; nhan = null; chia = null;
-                dauCong = true; dauChia = false; dauNhan = false; dauTru = false;
+                cong = "+"; tru = null; nhan = null; chia = null; XmuY = null; XcanY = null; Xmu3 = null; Xcan2 = null; Xcan3 = null; Xmu2 = null;
+                dauCong = true; dauChia = false; dauNhan = false; dauTru = false; xMuy = false;
+                xCany = false; xMu3 = false; xCan2 = false; xCan3 = false; xMu2 = false;
                 lenMau();
                 Luudiem();
             }
@@ -298,8 +270,9 @@ public class MainActivity extends AppCompatActivity {
                 if (chuoi.length() != 0){
                     bienTam = Float.parseFloat(txtManHinh.getText().toString().trim());
                 }
-                tru = "-"; cong = null; nhan = null; chia = null;
-                dauCong = false; dauChia = false; dauNhan = false; dauTru = true;
+                cong = null; tru = "-"; nhan = null; chia = null; XmuY = null; XcanY = null; Xmu3 = null; Xcan2 = null; Xcan3 = null; Xmu2 = null;
+                dauCong = false; dauChia = false; dauNhan = false; dauTru = true; xMuy = false;
+                xCany = false; xMu3 = false; xCan2 = false; xCan3 = false; xMu2 = false;
                 lenMau();
                 Luudiem();
             }
@@ -311,8 +284,8 @@ public class MainActivity extends AppCompatActivity {
                 if (chuoi.length() != 0){
                     bienTam = Float.parseFloat(txtManHinh.getText().toString().trim());
                 }
-                cong = null; tru = null; nhan = "*"; chia = null;
-                dauCong = false; dauChia = false; dauNhan = true; dauTru = false;
+                cong = null; tru = null; nhan = "*"; chia = null; XmuY = null; XcanY = null; Xmu3 = null; Xcan2 = null; Xcan3 = null; Xmu2 = null;
+                dauCong = false; dauChia = false; dauNhan = true; dauTru = false; xMuy = false; xCany = false; xMu3 = false; xCan2 = false; xCan3 = false; xMu2 = false;
                 lenMau();
                 Luudiem();
             }
@@ -324,8 +297,8 @@ public class MainActivity extends AppCompatActivity {
                 if (chuoi.length() != 0){
                     bienTam = Float.parseFloat(txtManHinh.getText().toString().trim());
                 }
-                cong = null; tru = null; nhan = null; chia = "/";
-                dauCong = false; dauChia = true; dauNhan = false; dauTru = false;
+                cong = null; tru = null; nhan = null; chia = "/"; XmuY = null; XcanY = null; Xmu3 = null; Xcan2 = null; Xcan3 = null; Xmu2 = null;
+                dauCong = false; dauChia = true; dauNhan = false; dauTru = false; xMuy = false; xCany = false; xMu3 = false; xCan2 = false; xCan3 = false; xMu2 = false;
                 lenMau();
                 Luudiem();
             }
@@ -355,6 +328,16 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
+    public void phimSo(String so){
+        checkKhoiChay(khoichay);
+        xuLy_Input();
+        xuLyCoChu();
+        xuLySo(so);
+        xuLyPhim_AC();
+        bienGiu = txtManHinh.getText().toString().trim();
+        Luudiem();
+    }
+//    XOA MAU CUA PHIM + - * /
     public void xoaMau(){
         txtCong.setBackgroundResource(R.drawable.custom_pheptinh);
         txtCong.setTextColor(Color.WHITE);
@@ -366,7 +349,6 @@ public class MainActivity extends AppCompatActivity {
         txtTru.setTextColor(Color.WHITE);
     }
     public void xuLy_Input() {
-
         if (phanTram == true) {
             txtManHinh.setText(null);
             phanTram = false;
@@ -375,33 +357,53 @@ public class MainActivity extends AppCompatActivity {
             txtManHinh.setText(null);
             dauBang = false;
         }
-
         if (dauCong == true){
             txtManHinh.setText(null);
             dauCong = false;
             txtCong.setBackgroundResource(R.drawable.custom_pheptinh);
             txtCong.setTextColor(Color.WHITE);
         }
-
         if (dauTru == true){
             txtManHinh.setText(null);
             dauTru = false;
             txtTru.setBackgroundResource(R.drawable.custom_pheptinh);
             txtTru.setTextColor(Color.WHITE);
         }
-
         if (dauNhan == true){
             txtManHinh.setText(null);
             dauNhan = false;
             txtNhan.setBackgroundResource(R.drawable.custom_pheptinh);
             txtNhan.setTextColor(Color.WHITE);
         }
-
         if (dauChia == true){
             txtManHinh.setText(null);
             dauChia = false;
             txtChia.setBackgroundResource(R.drawable.custom_pheptinh);
             txtChia.setTextColor(Color.WHITE);
+        }
+        if (xMu3 == true){
+            txtManHinh.setText(null);
+            xMu3 = false;
+        }
+        if (xMu2 == true){
+            txtManHinh.setText(null);
+            xMu2 = false;
+        }
+        if (xMuy == true){
+            txtManHinh.setText(null);
+            xMuy = false;
+        }
+        if (xCan2 == true ){
+            txtManHinh.setText(null);
+            xCan2 = false;
+        }
+        if (xCan3 == true){
+            txtManHinh.setText(null);
+            xCan3 = false;
+        }
+        if (xCany == true){
+            txtManHinh.setText(null);
+            xCany = false;
         }
     }
     public void lenMau(){
@@ -425,8 +427,7 @@ public class MainActivity extends AppCompatActivity {
             txtCong.setBackgroundResource(R.drawable.custom_pheptinh);
             txtCong.setTextColor(Color.WHITE);
         }
-
-        if (nhan == "*"){
+        if (nhan == "*") {
             txtNhan.setBackgroundResource(R.drawable.custom_color);
             txtNhan.setTextColor(Color.parseColor("#FFAB40"));
 
@@ -437,7 +438,6 @@ public class MainActivity extends AppCompatActivity {
             txtCong.setBackgroundResource(R.drawable.custom_pheptinh);
             txtCong.setTextColor(Color.WHITE);
         }
-
         if (chia == "/"){
             txtChia.setBackgroundResource(R.drawable.custom_color);
             txtChia.setTextColor(Color.parseColor("#FFAB40"));
@@ -457,14 +457,14 @@ public class MainActivity extends AppCompatActivity {
             if (number < 0){
                 txtManHinh.setText(Math.abs(number) + "");
             }else {
-                txtManHinh.setText("-"+number);
+                txtManHinh.setText("-" + number);
             }
         }else {
             Float number = Float.parseFloat(txtManHinh.getText().toString().trim());
             if (number < 0){
                 txtManHinh.setText(Math.abs(number) + "");
             }else {
-                txtManHinh.setText("-"+number);
+                txtManHinh.setText("-" + number);
             }
         }
     }
@@ -502,8 +502,6 @@ public class MainActivity extends AppCompatActivity {
                 txtManHinh.setTextSize(Float.parseFloat(sizeChuLon));
             }
         }
-
-
     }
     public void resultType(String dau, Float a){
         if (bienTam == bienTam.intValue()){
@@ -514,52 +512,67 @@ public class MainActivity extends AppCompatActivity {
     }
 //   Tinh Toan Phep tinh ( + - * / )
     public void tinhToan(String thucThi) {
+        Float a = Float.parseFloat(bienGiu);
         switch (thucThi) {
             case "+":
                 if (bienTam == null){
                     bienTam = Float.valueOf(0);
                 }
-                bienTam = bienTam + bienGiu;
+                bienTam = bienTam + a;
                 resultType(" + ", bienTam);
                 break;
             case "-":
                 if (bienTam == null){
                     bienTam = Float.valueOf(0);
                 }
-                bienTam = bienTam - bienGiu;
+                bienTam = bienTam - a;
                 resultType(" - ", bienTam);
                 break;
             case "*":
                 if (bienTam == null){
                     bienTam = Float.valueOf(0);
                 }
-                bienTam = bienTam * bienGiu;
+                bienTam = bienTam * a;
                 resultType(" * ", bienTam);
                 break;
             case "/":
                 if (bienTam == null){
                     bienTam = Float.valueOf(0);
                 }
-                bienTam = bienTam / bienGiu;
-                Float d = bienTam * bienGiu;
-                resultType(" / ", d);
+                bienTam = bienTam / a;
+                resultType(" / ", bienTam);
                 break;
-
-            case "^":
+            case "powy":
                 if (bienTam == null){
                     bienTam = Float.valueOf(0);
                 }
-                double avc = Math.pow(bienTam, bienGiu);
-                bienTam = Float.parseFloat(String.valueOf(avc));
+                double pow = Math.pow(bienTam, a);
+                bienTam = Float.parseFloat(String.valueOf(pow));
                 resultType((float) bienTam);
                 break;
             case "can":
                 if (bienTam == null){
                     bienTam = Float.valueOf(0);
                 }
-                double can = Math.exp(Math.log(bienTam) * 1/bienGiu);
+                double can = Math.exp(Math.log(bienTam) * 1/a);
                 bienTam = Float.parseFloat(String.valueOf(can));
                 resultType((float) bienTam);
+                break;
+            case "pow2":
+                Float pow2 = Float.parseFloat(txtManHinh.getText().toString().trim());
+                resultType((float) Math.pow(pow2, 2));
+                break;
+            case "pow3":
+                Float pow3 = Float.parseFloat(txtManHinh.getText().toString().trim());
+                resultType((float) Math.pow(pow3, 3));
+                break;
+            case "can2":
+                Float can2 = Float.parseFloat(txtManHinh.getText().toString().trim());
+                resultType((float) Math.sqrt(can2));
+                break;
+            case "can3":
+                Float can3 = Float.parseFloat(txtManHinh.getText().toString().trim());
+                resultType((float) Math.sqrt(can3));
                 break;
         }
     }
@@ -582,6 +595,18 @@ public class MainActivity extends AppCompatActivity {
         }
         if (XcanY != null){
             tinhToan(XcanY);
+        }
+        if (Xmu2 != null){
+            tinhToan(Xmu2);
+        }
+        if (Xmu3 != null){
+            tinhToan(Xmu3);
+        }
+        if (Xcan2 != null){
+            tinhToan(Xcan2);
+        }
+        if (Xcan3 != null){
+            tinhToan(Xcan3);
         }
     }
     public void anhXa(){
@@ -641,41 +666,17 @@ public class MainActivity extends AppCompatActivity {
         txtPi = (TextView) findViewById(R.id.textViewPi);
         txtRand = (TextView) findViewById(R.id.textViewRand);
     }
-     public void Luudiem(){
-         SharedPreferences.Editor editor = sharedPreferences.edit();
-         editor.putString("so", txtManHinh.getText().toString());
-         editor.putFloat("bienGiu", bienGiu);
-         editor.putFloat("bienTam", bienTam);
-         String dau = null;
-         if (cong != null){
-             dau = cong;
-         }
-         if (tru != null) {
-             dau = tru;
-         }
-         if(nhan != null){
-             dau = nhan;
-         }
-         if(chia != null){
-             dau = chia;
-         }
-         editor.putString("dau", dau);
-         editor.commit();
-     }
-
 //     ------------------ CODE Fragment LANDSCAPE------------------------------
      public void LandScape_Left(){
 //      ------------------------------ Dong 1------------------------------
-         txtNgoacP.setOnClickListener(new View.OnClickListener() {
+          txtNgoacP.setOnClickListener(new View.OnClickListener() {
               @Override
               public void onClick(View v) {
-
               }
           });
           txtNgoacT.setOnClickListener(new View.OnClickListener() {
               @Override
               public void onClick(View v) {
-
               }
           });
           txtMc.setOnClickListener(new View.OnClickListener() {
@@ -755,18 +756,19 @@ public class MainActivity extends AppCompatActivity {
           txtXmuTwo.setOnClickListener(new View.OnClickListener() {
               @Override
               public void onClick(View v) {
-                  chuoi = txtManHinh.getText().toString().trim();
-                  if (chuoi.length() != 0) {
-                      Float number = Float.parseFloat(txtManHinh.getText().toString().trim());
-                      double so = Math.pow(number, 2);
-                      resultType((float) so);
-                      Luudiem();
-                  }
+                  cong = null; tru = null; nhan = null; chia = null; XmuY = null; XcanY = null; Xmu3 = null; Xcan2 = null; Xcan3 = null; Xmu2 = "pow2";
+                  dauCong = false; dauChia = false; dauNhan = false; dauTru = false; xMuy = false; xCany = false; xMu3 = false; xCan2 = false; xCan3 = false; xMu2 = true;
+                  Float number = Float.parseFloat(txtManHinh.getText().toString().trim());
+                  double so = Math.pow(number, 2);
+                  resultType((float) so);
+                  Luudiem();
               }
           });
           txtXmuThree.setOnClickListener(new View.OnClickListener() {
               @Override
               public void onClick(View v) {
+                  cong = null; tru = null; nhan = null; chia = null; XmuY = null; XcanY = null; Xmu3 = "pow3"; Xcan2 = null; Xcan3 = null; Xmu2 = null;
+                  dauCong = false; dauChia = false; dauNhan = false; dauTru = false; xMuy = false; xCany = false; xMu3 = true; xCan2 = false; xCan3 = false; xMu2 = false;
                   Float number = Float.parseFloat(txtManHinh.getText().toString().trim());
                   double so = Math.pow(number, 3);
                   resultType((float) so);
@@ -780,50 +782,30 @@ public class MainActivity extends AppCompatActivity {
                   if (chuoi.length() != 0){
                       bienTam = Float.parseFloat(txtManHinh.getText().toString().trim());
                   }
-                  cong = null; tru = null; nhan = null; chia = null; XmuY = "^"; XcanY = null;
-                  dauCong = false; dauChia = false; dauNhan = true; dauTru = false; xMuy = true; xCany = false;
-                  lenMau();
+                  cong = null; tru = null; nhan = null; chia = null; XmuY = "powy"; XcanY = null; Xmu3 = null; Xcan2 = null; Xcan3 = null; Xmu2 = null;
+                  dauCong = false; dauChia = false; dauNhan = false; dauTru = false; xMuy = true; xCany = false; xMu3 = false; xCan2 = false; xCan3 = false; xMu2 = false;
                   Luudiem();
               }
           });
           txtEmuX.setOnClickListener(new View.OnClickListener() {
               @Override
               public void onClick(View v) {
-                  chuoi = txtManHinh.getText().toString().trim();
-                  if (chuoi.equals("0")) {
-                      txtManHinh.setText("1");
-                  } else {
-                      Float number = Float.parseFloat(txtManHinh.getText().toString().trim());
-                      double so = Math.pow(Math.E, number);
-                      resultType((float) so);
-                      Luudiem();
-                  }
+                  Float number = Float.parseFloat(txtManHinh.getText().toString().trim());
+                  resultType((float) Math.pow(Math.E, number));
+                  Luudiem();
               }
           });
           txtTenmuX.setOnClickListener(new View.OnClickListener() {
               @Override
               public void onClick(View v) {
                   if (txtTenmuX.getText().equals("10^x")) {
-                      chuoi = txtManHinh.getText().toString().trim();
-                      if (chuoi.equals("0")) {
-                          txtManHinh.setText("1");
-                      } else {
-                          Float number = Float.parseFloat(txtManHinh.getText().toString().trim());
-                          double so = Math.pow(10, number);
-                          resultType((float) so);
-                          Luudiem();
-                      }
-                  } else {
-                      chuoi = txtManHinh.getText().toString().trim();
-                      if (chuoi.equals("0")) {
-                          txtManHinh.setText("1");
-                      } else {
-                          Float number = Float.parseFloat(txtManHinh.getText().toString().trim());
-                          double so = Math.pow(2, number);
-                          resultType((float) so);
-                          Luudiem();
-                      }
+                      Float number = Float.parseFloat(txtManHinh.getText().toString().trim());
+                      resultType((float) Math.pow(10, number));
+                  }else {
+                      Float number = Float.parseFloat(txtManHinh.getText().toString().trim());
+                      resultType((float) Math.pow(2, number));
                   }
+                  Luudiem();
               }
           });
 //        ------------------------------ Dong 3------------------------------
@@ -836,39 +818,41 @@ public class MainActivity extends AppCompatActivity {
                  if (chuoi.equals("Infinity") == false){
                      resultType((float) so);
                  }
+                 Luudiem();
              }
          });
          txtCan2x.setOnClickListener(new View.OnClickListener() {
              @Override
              public void onClick(View v) {
-                     Float number = Float.parseFloat(txtManHinh.getText().toString().trim());
-                     double so = Math.sqrt(number);
-                     resultType((float) so);
-                     Luudiem();
-                 }
+                 cong = null; tru = null; nhan = null; chia = null; XmuY = null; XcanY = null; Xmu3 = null; Xcan2 = "can2"; Xcan3 = null; Xmu2 = null;
+                 dauCong = false; dauChia = false; dauNhan = false; dauTru = false; xMuy = false; xCany = false; xMu3 = false; xCan2 = true ; xCan3 = false; xMu2 = false;
+                 Float number = Float.parseFloat(txtManHinh.getText().toString().trim());
+                 resultType((float) Math.sqrt(number));
+                 Luudiem();
+             }
          });
          txtCan3x.setOnClickListener(new View.OnClickListener() {
              @Override
              public void onClick(View v) {
+                 cong = null; tru = null; nhan = null; chia = null; XmuY = null; XcanY = null; Xmu3 = null; Xcan2 = null; Xcan3 = "can3"; Xmu2 = null;
+                 dauCong = false; dauChia = false; dauNhan = false; dauTru = false; xMuy = false; xCany = false; xMu3 = false; xCan2 = false ; xCan3 = true; xMu2 = false;
                  Float number = Float.parseFloat(txtManHinh.getText().toString().trim());
-                 double so = Math.cbrt(number);
-                 resultType((float) so);
+                 resultType((float) Math.cbrt(number));
                  Luudiem();
              }
          });
          txtCanYX.setOnClickListener(new View.OnClickListener() {
              @Override
              public void onClick(View v) {
+                 cong = null; tru = null; nhan = null; chia = null; XmuY = null; XcanY = "can"; Xmu3 = null; Xcan2 = null; Xcan3 = null; Xmu2 = null;
+                 dauCong = false; dauChia = false; dauNhan = false; dauTru = false; xMuy = false; xCany = true; xMu3 = false; xCan2 = false ; xCan3 = false; xMu2 = false;
                  chuoi = txtManHinh.getText().toString().trim();
                  if (chuoi.length() != 0){
                      bienTam = Float.parseFloat(txtManHinh.getText().toString().trim());
                  }
-                 cong = null; tru = null; nhan = null; chia = null; XmuY = null; XcanY = "can";
-                 dauCong = false; dauChia = false; dauNhan = true; dauTru = false; xMuy = false; xCany = true;
-                 lenMau();
-                 Luudiem();
              }
          });
+
          txtLn.setOnClickListener(new View.OnClickListener() {
              @Override
              public void onClick(View v) {
@@ -877,8 +861,7 @@ public class MainActivity extends AppCompatActivity {
                      txtManHinh.setText("Infinity");
                  }else {
                      Float number = Float.parseFloat(txtManHinh.getText().toString().trim());
-                     double so = Math.log(number);
-                     resultType((float) so);
+                     resultType((float) Math.log(number));
                      Luudiem();
                  }
              }
@@ -891,12 +874,12 @@ public class MainActivity extends AppCompatActivity {
                      txtManHinh.setText("Infinity");
                  }else {
                      Float number = Float.parseFloat(txtManHinh.getText().toString().trim());
-                     double so = Math.log10(number);
-                     resultType((float) so);
+                     resultType((float) Math.log10(number));
                      Luudiem();
                  }
              }
          });
+//        --------------------------------DONG 4 --------------------------------
          txtXgiaiThua.setOnClickListener(new View.OnClickListener() {
              @Override
              public void onClick(View v) {
@@ -908,8 +891,7 @@ public class MainActivity extends AppCompatActivity {
                          txtManHinh.setText("Infinity");
                      }else {
                          int number = Integer.parseInt(txtManHinh.getText().toString().trim());
-                         double so = factorial(number);
-                         resultType((float) so);
+                         resultType((float) factorial(number));
                          Luudiem();
                      }
 
@@ -984,7 +966,7 @@ public class MainActivity extends AppCompatActivity {
              public void onClick(View v) {
              }
          });
-
+//        -----------------------DONG 5 ---------------------------------------
          txtDeg.setOnClickListener(new View.OnClickListener() {
              @Override
              public void onClick(View v) {
@@ -1000,8 +982,7 @@ public class MainActivity extends AppCompatActivity {
              public void onClick(View v) {
                  chuoi = txtManHinh.getText().toString().trim();
                  if (chuoi.equals("0") == false) {
-                     Float number = Float.valueOf(Integer.parseInt(txtManHinh.getText().toString().trim()));
-                     resultType((float) Math.sinh(number));
+                     resultType((float) Math.sinh(Double.parseDouble(chuoi)));
                      Luudiem();
                  }
              }
